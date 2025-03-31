@@ -18,28 +18,41 @@ let walls = [];
 let goalX, goalY;
 let gameCreated = false;
 let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
+let canvas;
 
 function mousePressed() {
   console.log("x: " + mouseX + ", y: " + mouseY);
 }
 
 function setup() {
-  createCanvas(800, 800);
   colorMode(RGB, 255, 255, 255, 100);
+  canvas = createCanvas(800, 800);
+  centerCanvas();
   resetBVB();
 }
-function keyPressed() {
-  if (key === ' ') { // Press L to skip
-    scene++; // Move to the next scene
-    if (scene > 6) {
-      scene = 0; // Restart loop if needed
-    }
-    transitionTime1 = millis(); // Reset transition timing
-    transitionTime2 = millis(); // Reset transition timing 
-    transitionTime3 = millis(); // Reset transition timing
-    transitionTime4 = millis(); // Reset transition timing
 
+function centerCanvas() {
+  let x = (windowWidth - width) / 2;
+  let y = (windowHeight - height) / 2;
+  canvas.position(x, y);
+}
+
+function windowResized() {
+  centerCanvas();
+}
+
+function keyPressed() {
+  if (key === ' ') { // press SPACE to skip scene (would be removed in final cut)
+    scene++;
+    if (scene > 6) {
+      scene = 0; // restart to first scene
+    }
+    transitionTime1 = millis();
+    transitionTime2 = millis();
+    transitionTime3 = millis();
+    transitionTime4 = millis();
   }
+
   if (key === 'w' || key === 'W') moveUp = true;
   if (key === 's' || key === 'S') moveDown = true;
   if (key === 'a' || key === 'A') moveLeft = true;
@@ -62,7 +75,7 @@ function draw() {
     fill(255);
     textSize(20);
     textAlign(CENTER, TOP);
-    text("Attempt: " + (cornerHits + 1), width / 2, 20);
+    text((cornerHits)+" / 3", width / 2, 20);
 
     bvbX += speedX;
     bvbY += speedY;
@@ -172,7 +185,7 @@ function resetBVB() {
   bvbTextColor = color(random(255), random(255), random(255));
 
   cornerHits++;
-  if (cornerHits >= 1) {
+  if (cornerHits >= 3) {
     scene = 1; // Change to scene 1 (message)
     transitionTime1 = millis();
   }
