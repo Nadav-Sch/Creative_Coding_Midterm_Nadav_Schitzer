@@ -677,6 +677,7 @@ function gameScene2() {
   if (millis() - survivalStartTime >= survivalDuration) {
     scene = 7;
     resetGameScene2();
+    game2Created = false;
   }
   // immunity zone, barely almost not visible, makes red walls that pass through it disappear under it as a subtle hint on how to beat the game
   fill(15, 15, 15, 255);
@@ -722,7 +723,7 @@ function inImmunityZone() {
   );
 }
 // reset second game when player dies
-function resetGameScene2() {
+function resetGameScene2(won = false) {
   // reset walls
   movingWalls = [];
   topWalls = [];
@@ -737,14 +738,15 @@ function resetGameScene2() {
   // reset immunity corner
   immunityX = 0;
   immunityY = height - 20;
-  // reset suvival counter
+  // reset survival timer
   survivalStartTime = millis();
   game2Created = false;
   allowTopWalls = false;
-  // reset to BVB screen on death
-  scene = 0;
-  cornerHits = -1;
-  resetBVB();
+  // only reset to BVB screen if the player died
+  if (!won) {
+    scene = 0;
+    transitionTime1 = millis();
+  }
 }
 // end screen for when game is beat
 function endScreen() {
