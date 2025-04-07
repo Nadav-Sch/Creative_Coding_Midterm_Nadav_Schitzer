@@ -1,4 +1,7 @@
-// too many all nighters have been pulled
+// Nadav Schitzer - CC Midterm
+// Took me WAY too long
+// I hope it frustrates :)
+
 let scene = 0;
 let bvbX, bvbY;
 let speedX, speedY;
@@ -36,21 +39,27 @@ let immunitySize = 60;
 let survivalStartTime = 0;
 let survivalDuration = 30000;
 let immunityBridgeX = 400;
-let immunityBridgeY = 450;
+let immunityBridgeY = 460;
 let immunityBridgeWidth = 20;
 let immunityBridgeHeight = 320;
-
-
+let confettiPieces = [];
+let confettiStartTime = 0;
+let lastBurstTime = 0;
 
 function mousePressed() {
-  console.log("x: " + mouseX + ", y: " + mouseY);
-}
+    // check if click is inside the restart button on last screen
+    let d = dist(mouseX, mouseY, width / 2, 70);
+    if (d < 20) { 
+      scene = 0;
+    }
+  }
 
 function setup() {
   colorMode(RGB, 255, 255, 255, 100);
   canvas = createCanvas(800, 800);
   centerCanvas();
   resetBVB();
+  document.body.style.backgroundColor = "black";
 }
 
 function centerCanvas() {
@@ -74,7 +83,7 @@ function keyPressed() {
     transitionTime3 = millis();
     transitionTime4 = millis();
   }
-  if (key >= '1' && key <= '8') {
+  if (key >= '1' && key <= '8') { // keys 1-8 = screens 0-7 accordingly
     scene = int(key) - 1;
     if (scene === 0) {
       resetBVB();
@@ -84,13 +93,13 @@ function keyPressed() {
     transitionTime3 = millis();
     transitionTime4 = millis();
   }
-
+// classic WASD controls to control player
   if (key === 'w' || key === 'W') moveUp = true;
   if (key === 's' || key === 'S') moveDown = true;
   if (key === 'a' || key === 'A') moveLeft = true;
   if (key === 'd' || key === 'D') moveRight = true;
 }
-
+// when key is released stop player moving
 function keyReleased() {
   if (key === 'w' || key === 'W') moveUp = false;
   if (key === 's' || key === 'S') moveDown = false;
@@ -99,10 +108,41 @@ function keyReleased() {
 }
 
 function draw() {
-  background(0);
-
+  // color of whole background to match color of screen background
   if (scene === 0) {
-    // corner hit counter (3 to pass to next screen)
+    document.body.style.backgroundColor = "black";
+  } 
+  else if (scene === 1) {
+    document.body.style.backgroundColor = "rgb(50, 50, 150)";
+  }
+  else if (scene === 2) {
+    document.body.style.backgroundColor = "rgb(180, 20, 20)";
+  }
+  else if (scene === 3) {
+    document.body.style.backgroundColor = "black";
+  }
+  else if (scene === 4) {
+    document.body.style.backgroundColor = "rgb(150, 120, 255)";
+  }
+  else if (scene === 5) {
+    document.body.style.backgroundColor = "rgb(255, 0, 0)";
+  }
+  else if (scene === 6) {
+    document.body.style.backgroundColor = "black";
+  }
+  else if (scene === 7) {
+    document.body.style.backgroundColor = "rgb(150, 120, 255)";
+  }
+  // bkack bg
+  background(0);
+  // white border to be able to tell border of games and bvb
+  stroke(255)
+  strokeWeight(2);
+  noFill();
+  rect(0, 0, width, height);
+  
+  // scene changer if statemtn
+  if (scene === 0) {
     fill(255);
     stroke(0);
     strokeWeight(3);
@@ -123,24 +163,24 @@ function draw() {
     }
     bvb(bvbX, bvbY);
     
-    // reset zones outlines (I will make them invisible in end produt)
-    stroke(255, 0, 0);
-    noFill();
-    triangle(0, 0, 15, 0, 0, 15);
-    triangle(width, 0, width - 15, 0, width, 15);
-    triangle(0, height, 0, height - 15, 15, height);
-    triangle(width, height, width, height - 15, width - 15, height);
+    // BVB screen reset zones outlines (I will make them invisible in end produt)
+    // stroke(255, 0, 0);
+    // noFill();
+    // triangle(0, 0, 15, 0, 0, 15);
+    // triangle(width, 0, width - 15, 0, width, 15);
+    // triangle(0, height, 0, height - 15, 15, height);
+    // triangle(width, height, width, height - 15, width - 15, height);
   } 
  else if (scene === 1) {
     transitionScreen1();
-    if (millis() - transitionTime1 > 3000) {
+    if (millis() - transitionTime1 > 2000) {
       scene = 2;
       transitionTime2 = millis();
     }
   }
   else if (scene === 2) {
     transitionScreen2();
-    if (millis() - transitionTime2 > 2000) {
+    if (millis() - transitionTime2 > 1500) {
       scene = 3;
       createGame();
     }
@@ -153,7 +193,7 @@ function draw() {
   }
   else if (scene === 4) {
     transitionScreen3();
-    if (millis() - transitionTime3 > 2000) {
+    if (millis() - transitionTime3 > 2500) {
       scene = 5;
       gameCreated = false;
       transitionTime4 = millis();
@@ -161,7 +201,7 @@ function draw() {
   }
   else if (scene === 5) {
     transitionScreen4();
-    if (millis() - transitionTime4 > 2000) {
+    if (millis() - transitionTime4 > 1500) {
       scene = 6;
     }
   }
@@ -211,10 +251,9 @@ function bvb(x, y) {
   stroke(0);
   strokeWeight(3);
   rect(0, 0, bvbSize, bvbSize, 7);
-
   pop();
 }
-
+// BVB logo resets with random colors and speed
 function resetBVB() {
   bvbX = width / 2;
   bvbY = height / 2;
@@ -222,14 +261,14 @@ function resetBVB() {
   speedY = random(1, 3) * (random() > 0.5 ? 1 : -1);
   bvbBoxColor = color(random(100, 255), random(100, 255), random(100, 255));
   bvbTextColor = color(random(100, 255), random(100, 255), random(100, 255));
-
+// 3 corner hits to go to next stage
   cornerHits++;
   if (cornerHits >= 3) {
     scene = 1;
     transitionTime1 = millis();
   }
 }
-
+// corners that reset the bvb right before the hit (not very satisfying)
 function hitCorner(x, y, size) {
   return (
     insideTriangle(x, y, 0, 0, 15, 0, 0, 15) ||
@@ -251,23 +290,24 @@ function transitionScreen1() {
   push();
   translate(width/2, height/2 + 10);
   // face
-  fill(255, 255, 0);
-  noStroke();
+  fill(255);
+  stroke(0);
+  strokeWeight(1);
   ellipse(0, 0, 200, 200);
   // eyes
-  fill(0);
-  ellipse(-40, 0, 20, 20);
-  ellipse(40, 0, 20, 20);
-   // eyebrows
-   stroke(0);
-   strokeWeight(5);
-   line(-30, -35, -70, -30); 
-   line(70, -30, 30, -35);
-  // mouth
-  noFill();
   stroke(0);
   strokeWeight(5);
-  arc(0, 40, 80, 30, 0, PI);
+  noFill();
+  // left
+  beginShape();
+  vertex(-55, 0);
+  quadraticVertex(-40, -5, -25, 0);
+  endShape();
+  // right
+  beginShape();
+  vertex(25, 0);
+  quadraticVertex(40, -5, 55, 0);
+  endShape();
 }
 
 function transitionScreen2() {
@@ -279,111 +319,32 @@ function transitionScreen2() {
   let shakeY = random(-3, 3);
   translate(shakeX, shakeY);
   // face
-  fill(255, 100, 100);
+  fill(0);
   noStroke();
   ellipse(0, 0, 200, 200);
-  // eyebrows
-  stroke(0);
-  strokeWeight(5);
-  noFill();
-  line(-55, -25, -15, -15);
-  line(15, -15, 55, -25);
   // eyes
-  noStroke();
-  fill(0);
-  ellipse(-40, 0, 20, 20);
-  ellipse(40, 0, 20, 20);
-  // frown
-  noFill();
-  stroke(0);
-  strokeWeight(5);
-  arc(0, 50, 80, 50, PI, TWO_PI);
-  pop();
-}
-
-function gameScene() {
-  background(0);
-  // player movement and speed randomized at every frame (aggravating)
-  if (moveUp) {
-    playerSpeed = random(2, 9);
-    playerY -= playerSpeed;
-  }
-  if (moveDown) {
-    playerSpeed = random(2, 9);
-    playerY += playerSpeed;
-  }
-  if (moveLeft) {
-    playerSpeed = random(2, 9);
-    playerX -= playerSpeed;
-  }
-  if (moveRight) {
-    playerSpeed = random(2, 9);
-    playerX += playerSpeed;
-  }
-  // draw goal (exit point)
-  fill(0, 255, 0);
-  noStroke();
-  rect(goalX, goalY, 20, 20);
-  // draw player
-  fill(255);
-  rect(playerX, playerY, playerSize, playerSize);
-  // draw walls
   fill(255, 0, 0);
-  for (let wall of walls) {
-    rect(wall.x, wall.y, wall.w, wall.h);
-  }
-  // check for collision with walls
-  for (let wall of walls) {
-    if (
-      playerX < wall.x + wall.w &&
-      playerX + playerSize > wall.x &&
-      playerY < wall.y + wall.h &&
-      playerY + playerSize > wall.y
-    ) {
-      if (!inImmunityBridge()) {
-        resetGameScene();
-      }
-    }
-  }
-  // check if player hits the border then reset if they do
-  if (
-    playerX - playerSize / 2 < 0 || 
-    playerX + playerSize / 2 > width || 
-    playerY - playerSize / 2 < 0 || 
-    playerY + playerSize / 2 > height
-  ) {
-    resetGameScene();
-  }
-  // check if player reaches the goal
-  if (
-  playerX < goalX + 20 &&
-  playerX + playerSize > goalX &&
-  playerY < goalY + 20 &&
-  playerY + playerSize > goalY
-) {
-    scene = 4;
-    transitionTime3 = millis();
-  }
-   // secret path bridge
-   fill(0, 0, 0, 0);
-   noStroke();
-   rect(immunityBridgeX, immunityBridgeY, immunityBridgeWidth, immunityBridgeHeight);
-   // question box (?)
-   fill(20, 120, 255);
-   stroke(150);
-   strokeWeight(0.4);
-   textSize(21);
-   textAlign(CENTER, CENTER);
-   text('?', 410, 770);
+  noStroke();
+  // left
+  beginShape();
+  vertex(-60, -20);
+  vertex(-20, -10);
+  bezierVertex(-30, 5, -50, 5, -60, -20);
+  endShape(CLOSE);
+  // right
+  beginShape();
+  vertex(20, -10);
+  vertex(60, -20);
+  bezierVertex(50, 5, 30, 5, 20, -10);
+  endShape(CLOSE);
+  pop();
 }
 
 function createGame() {
   if (gameCreated) return;
   // player start position
-  // playerX = 22;
-  // playerY = 22;
-  playerX = 400;
-  playerY = 760;
+  playerX = 22;
+  playerY = 22;
   // goal psition and color
   goalX = 400;
   goalY = 400;
@@ -448,6 +409,82 @@ function createGame() {
     gameCreated = true;
   }
 
+function gameScene() {
+  background(0);
+  // player movement and speed randomized at every frame (aggravating)
+  if (moveUp) {
+    playerSpeed = random(1, 9);
+    playerY -= playerSpeed;
+  }
+  if (moveDown) {
+    playerSpeed = random(1, 9);
+    playerY += playerSpeed;
+  }
+  if (moveLeft) {
+    playerSpeed = random(1, 9);
+    playerX -= playerSpeed;
+  }
+  if (moveRight) {
+    playerSpeed = random(1, 9);
+    playerX += playerSpeed;
+  }
+  // draw goal (exit point)
+  fill(0, 255, 0);
+  noStroke();
+  rect(goalX, goalY, 20, 20);
+  // draw player
+  fill(255);
+  rect(playerX, playerY, playerSize, playerSize);
+  // draw walls
+  fill(255, 0, 0);
+  for (let wall of walls) {
+    rect(wall.x, wall.y, wall.w, wall.h);
+  }
+  // check for collision with walls
+  for (let wall of walls) {
+    if (
+      playerX < wall.x + wall.w &&
+      playerX + playerSize > wall.x &&
+      playerY < wall.y + wall.h &&
+      playerY + playerSize > wall.y
+    ) {
+      if (!inImmunityBridge()) {
+        resetGameScene();
+      }
+    }
+  }
+  // check if player hits the border then reset if they do
+  if (
+    playerX - playerSize / 2 < 0 || 
+    playerX + playerSize / 2 > width || 
+    playerY - playerSize / 2 < 0 || 
+    playerY + playerSize / 2 > height
+  ) {
+    resetGameScene();
+  }
+  // check if player reaches the goal
+  if (
+  playerX < goalX + 20 &&
+  playerX + playerSize > goalX &&
+  playerY < goalY + 20 &&
+  playerY + playerSize > goalY
+) {
+    scene = 4;
+    transitionTime3 = millis();
+  }
+   // secret path bridge
+   fill(0, 0, 0, 0);
+   noStroke();
+   rect(immunityBridgeX, immunityBridgeY, immunityBridgeWidth, immunityBridgeHeight);
+   // question box (?)
+   fill(20, 120, 255);
+   stroke(150);
+   strokeWeight(0.4);
+   textSize(21);
+   textAlign(CENTER, CENTER);
+   text('?', 410, 770);
+}
+
 function inImmunityBridge() {
   return (
     playerX + playerSize > immunityBridgeX &&
@@ -461,18 +498,100 @@ function resetGameScene() {
   playerX = 22;
   playerY = 22;
   gameCreated = false;
+  scene = 0;
+  cornerHits = -1;
+  resetBVB();
 }
 
 function transitionScreen3() {
   background(150, 120, 255);
+  // party cone
+  push();
+  translate(width/2, height);
+  fill(255, 200, 0);
+  stroke(200, 150, 0);
+  strokeWeight(2);
+  beginShape();
+  vertex(0, 0);
+  vertex(-40, -80);
+  vertex(40, -80);
+  endShape(CLOSE);
+  stroke(255, 100, 100);
+  strokeWeight(2);
+  line(0, 0, -30, -80);
+  line(0, 0, -15, -80);
+  line(0, 0, 0, -80);
+  line(0, 0, 15, -80);
+  line(0, 0, 30, -80);
+  fill(0, 0, 0, 100);
+  noStroke();
+  arc(0, -82, 80, 20, 0, PI, OPEN);
+  pop();
+  // confetti burst
+  if (confettiPieces.length === 0) {
+    for (let i = 0; i < 300; i++) {
+      confettiPieces.push({
+        x: width/2,
+        y: height - 70,
+        angle: random(-PI/4, -3*PI/4),
+        speed: random(4, 9),
+        size: random(6, 9),
+        color: random([
+          color(255, 0, 0),
+          color(0, 255, 0),
+          color(0, 0, 255)
+        ])
+      });
+    }
+    confettiStartTime = millis();
+  }
+  for (let confetti of confettiPieces) {
+    confetti.x += cos(confetti.angle) * confetti.speed;
+    confetti.y += sin(confetti.angle) * confetti.speed;
+    fill(confetti.color);
+    noStroke();
+    ellipse(confetti.x, confetti.y, confetti.size);
+  }
+  // reset after 1 second
+  if (millis() - confettiStartTime > 4000) {
+    confettiPieces = [];
+  }
 }
 
 function transitionScreen4() {
   background(255, 0, 0);
+  push();
+translate(width/2, height/2 + 20);
+
+// even more aggressive abd angry vibration
+let shakeX = random(-10, 10);
+let shakeY = random(-10, 10);
+translate(shakeX, shakeY);
+// face
+fill(0);
+noStroke();
+ellipse(0, 0, 600, 600);
+//eyes
+fill(255, 0, 0);
+noStroke();
+// left
+beginShape();
+vertex(-180, -70);
+vertex(-70, -30);
+bezierVertex(-90, 30, -160, 30, -180, -70);
+endShape(CLOSE);
+// right
+beginShape();
+vertex(70, -30);
+vertex(180, -70);
+bezierVertex(160, 30, 90, 30, 70, -30);
+endShape(CLOSE);
+pop();
+
 }
 
 
-// second game 
+// second game
 function createGame2() {
   if (game2Created) return;
   playerX = width / 2 - playerSize / 2;
@@ -517,6 +636,7 @@ function gameScene2() {
   playerSpeed = min(playerSpeed, 4);
   // make the moving walls visible
   fill(255, 0, 0);
+  noStroke();
   for (let wall of movingWalls) {
     wall.x += wall.speedX;
     wall.y += wall.speedY;
@@ -565,6 +685,11 @@ function gameScene2() {
   // make player visible
   fill(255);
   rect(playerX, playerY, playerSize, playerSize);
+
+  noFill();
+  stroke(255);
+  strokeWeight(2);
+  rect(0, 0, width, height);
 }
 // spawn walls from both sides
 function spawnSideWall() {
@@ -616,12 +741,136 @@ function resetGameScene2() {
   survivalStartTime = millis();
   game2Created = false;
   allowTopWalls = false;
+  // reset to BVB screen on death
+  scene = 0;
+  cornerHits = -1;
+  resetBVB();
 }
 // end screen for when game is beat
 function endScreen() {
-  background(0, 200, 0);
-  fill(255);
-  textSize(60);
-  textAlign(CENTER, CENTER);
-  text("YOU WIN!!", width / 2, height / 2);
+  background(150, 120, 255);
+  // little evil faces
+  drawEvilFace(150, 200, 60);
+  drawEvilFace(350, 150, 50);
+  drawEvilFace(600, 500, 70);
+  drawEvilFace(270, 660, 50);
+  drawEvilFace(700, 300, 55);
+  drawEvilFace(120, 500, 60);
+  drawEvilFace(400, 350, 150);
+  drawEvilFace(690, 680, 50);
+  drawEvilFace(560, 65, 60);
+  drawEvilFace(140, 10, 45);
+  drawEvilFace(70, 690, 40);
+
+  // party cone
+  push();
+  translate(width/2, height);
+  fill(255, 200, 0);
+  stroke(200, 150, 0);
+  strokeWeight(2);
+  beginShape();
+  vertex(0, 0);
+  vertex(-40, -80);
+  vertex(40, -80);
+  endShape(CLOSE);
+  stroke(255, 100, 100);
+  strokeWeight(2);
+  line(0, 0, -30, -80);
+  line(0, 0, -15, -80);
+  line(0, 0, 0, -80);
+  line(0, 0, 15, -80);
+  line(0, 0, 30, -80);
+  fill(0);
+  noStroke();
+  arc(0, -82, 80, 20, 0, PI, OPEN);
+  pop();
+  // confetti burst every 1 second
+  if (millis() - lastBurstTime > 1000) {
+    for (let i = 0; i < 300; i++) { 
+      confettiPieces.push({
+        x: width/2,
+        y: height - 70,
+        angle: random(-PI/4, -3*PI/4),
+        speed: random(3, 9),
+        size: random(6, 9),
+        color: random([
+          color(255, 0, 0),
+          color(0, 255, 0),
+          color(0, 0, 255)
+        ])
+      });
+    }
+    lastBurstTime = millis();
+  }
+  // move and draw confetti
+  for (let confetti of confettiPieces) {
+    confetti.x += cos(confetti.angle) * confetti.speed;
+    confetti.y += sin(confetti.angle) * confetti.speed;
+    fill(confetti.color);
+    noStroke();
+    ellipse(confetti.x, confetti.y, confetti.size);
+  }
+  // confetti limit so it doesnt lag computer after a few seconds
+  if (confettiPieces.length > 1000) {
+    confettiPieces.splice(0, confettiPieces.length - 1000);
+  }
+
+  // restart button to go back to scene 0 (screen 1)
+  drawRestartButton();
+}
+
+function drawRestartButton() {
+  push();
+  translate(width / 2, 70);
+  // restart button
+  fill(255, 33, 44);
+  stroke(255);
+  strokeWeight(2);
+  ellipse(0, 0, 40, 40);
+  // arrow inside restart button
+  noFill();
+  stroke(255);
+  strokeWeight(3);
+  let arcRadius = 24;
+  let startAngle = radians(45);
+  let endAngle = radians(300);
+  arc(0, 0, arcRadius, arcRadius, startAngle, endAngle);
+  let tipAngle = startAngle;
+  let tipX = cos(tipAngle) * arcRadius / 2;
+  let tipY = sin(tipAngle) * arcRadius / 2;
+  // arrow tip
+  push();
+  translate(tipX, tipY);
+  rotate(radians(-27));
+  line(0, 0, -5, -5);
+  line(0, 0, -5, 5);
+  pop();
+  pop();
+}
+function drawEvilFace(x, y, size) {
+  push();
+  let shakeX = random(-3, 3);
+  let shakeY = random(-3, 3);
+  translate(x + shakeX, y + shakeY);
+  scale(size / 200);
+  // face
+  fill(0);
+  noStroke();
+  ellipse(0, 0, 200, 200);
+  // eyes
+  fill(255, 0, 0);
+  noStroke();
+  // left eye
+  beginShape();
+  vertex(-60, -20);
+  vertex(-20, -10);
+  bezierVertex(-30, 5, -50, 5, -60, -20);
+  endShape(CLOSE);
+  // right eye
+  beginShape();
+  vertex(20, -10);
+  vertex(60, -20);
+  bezierVertex(50, 5, 30, 5, 20, -10);
+  endShape(CLOSE);
+  pop();
 }
